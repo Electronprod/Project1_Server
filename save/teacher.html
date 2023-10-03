@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Расписание %teacher%</title>
+    <style type="text/css">
+      TABLE {
+       width: 500px; /* Ширина таблицы */
+       border-collapse: collapse; /* Убираем двойные линии между ячейками */
+      }
+      TD, TH {
+       padding: 3px; /* Поля вокруг содержимого таблицы */
+       border: 1px solid black; /* Параметры рамки */
+      }
+      TH {
+       background: #b0e0e6; /* Цвет фона */
+      }
+     </style>
+</head>
+<body>
+	<div>
+		<h1>Расписание уроков: %teacher%:</h1>
+		<br>
+			        <table style="float: left;">
+            <tbody>
+              <tr>
+                <th style="background-color: red"><b>Время урока</b></th>
+                <th style="background-color: red"><b>Название</b></th>
+                <th style="background-color: red"><b>Класс</b></th>
+              </tr>
+              <tr>
+                <th colspan="3" style="background-color: blanchedalmond"><b>Понедельник<b></b></th>
+              </tr>
+              <tr>
+                %monday%
+              </tr>
+              <tr>
+                <th colspan="3" style="background-color: blanchedalmond;"><b>Вторник<b></b></th>
+              </tr>
+              <tr>
+                %tuesday%
+              </tr>
+              <tr>
+                <th colspan="3" style="background-color: blanchedalmond;"><b>Среда<b></b></th>
+              </tr>
+              <tr>
+                %wednesday%
+              </tr>
+              <tr>
+                <th colspan="3" style="background-color: blanchedalmond;">Четверг<b></b></th>
+              </tr>
+              <tr>
+                %thursday%
+              </tr>
+              <tr>
+                <th colspan="3" style="background-color: blanchedalmond;"><b>Пятница<b></b></th>
+              </tr>
+              <tr>
+                %friday%
+              </tr>
+              <tr>
+                <th colspan="3" style="background-color: blanchedalmond;"><b>Суббота<b></b></th>
+              </tr>
+              <tr>
+                %saturday%
+              </tr>
+              <tr>
+                <th colspan="3" style="background-color: blanchedalmond;"><b>Воскресенье<b></b></th>
+              </tr>
+              <tr>
+                %sunday%
+              </tr>
+            </tbody>
+          </table>
+	</div>
+	<div>
+	    <!-- Форма с переадресацией -->
+    <form action="/"> <!-- Замените на нужный URL адрес -->
+        <button type="submit">Перейти на главную</button>
+    </form>
+	</div>
+</body>
+</html>
