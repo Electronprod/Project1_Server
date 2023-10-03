@@ -9,7 +9,7 @@ import electron.utils.Other;
 import electron.utils.logger;
 
 public class Project1_Server {
-	//v1
+	//v1.0
 	public static final String version = "Project1_Server - 1.1";
 	public static void main(String[] args){
 		//Enable or Disable debug messages
