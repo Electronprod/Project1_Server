@@ -8,11 +8,13 @@ import org.json.simple.JSONObject;
 import electron.data.FileIteractor;
 import electron.data.database;
 import electron.data.settings;
-
+/**
+ * HTML generator class
+ */
 public class HTMLGenerator {
 	private static String[] day = {"Monday", "Tuesday", "Wednesday","Thursday","Friday","Saturday","Sunday"};
 	public static String generateTeacher(String teachername) {
-		//Подгружаем html из файлов
+		//Loading HTML template from file
 		String index = FileIteractor.getFileLine(new File("teacher.html"));
 		index=index.replaceAll("%teacher%", teachername);
 		index=index.replace("%monday%", database.getTeacherLessons(day[0],teachername));
@@ -26,7 +28,7 @@ public class HTMLGenerator {
 	}
 	
 	public static String generateIndex() {
-		//Подгружаем html из файлов
+		//Loading HTML template from file
 		String index = FileIteractor.getFileLine(new File("index.html"));
 		String gen="";
 		for(int i=0;i<settings.getListClasses().size();i++) {
@@ -37,10 +39,15 @@ public class HTMLGenerator {
 		index=index.replace("%body%",gen);
 		return index;
 	}
+	/**
+	 * Generates HTML table for class
+	 * @param classname - class
+	 * @return generated HTML
+	 */
 	private static String generateTable(String classname) {
-		//Шаблон таблицы
+		//Loading HTML template from file
 		String table = FileIteractor.getFileLine(new File("table.html"));
-		//Заменяем плейсхолдеры
+		//change placeholders
 		table=table.replace("%classname%", classname);
 		table=table.replace("%monday%", compile(day[0],classname));
 		table=table.replace("%tuesday%", compile(day[1],classname));
@@ -52,6 +59,12 @@ public class HTMLGenerator {
 		return table;
 		
 	}
+	/**
+	 * Data parser
+	 * @param day - day
+	 * @param classname - class
+	 * @return
+	 */
 	private static String compile(String day,String classname) {
 		JSONArray arr = database.getLessonsForClass(database.getDay(day), classname);
 		if(arr==null) {
@@ -64,6 +77,12 @@ public class HTMLGenerator {
 		if(lessons==null) {return "<th>No data</th><th>No data</th><th>No data</th><th>No data</th>";}
 		return lessons;
 	}
+	/**
+	 * Data parser
+	 * @param lesson - lesson
+	 * @param num - number of lesson
+	 * @return
+	 */
 	private static String generateTableElement(JSONObject lesson,int num) {
 		String time = String.valueOf(lesson.get("time"));
 		String name = String.valueOf(lesson.get("lesson"));

@@ -14,8 +14,15 @@ import electron.data.database;
 import electron.generators.HTMLGenerator;
 import electron.utils.logger;
 
+/**
+ * Server builder and worker
+ */
 public class site {
 	static String index;
+	/**
+	 * Start method for server
+	 * @throws IOException - server exceptions
+	 */
 	public static void load() throws IOException {
 		HttpServer server = HttpServer.create(new InetSocketAddress(database.getPort()), 0);
 		server.createContext("/", new MainHandler());
@@ -27,24 +34,36 @@ public class site {
 	}
 public static class MainHandler implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException {
-        // Получение URI запроса
+        //Get URI question
         URI uri = exchange.getRequestURI();
         String request = uri.toString();
         try {
+        	//Format URI to UTF8
             request = java.net.URLDecoder.decode(request, StandardCharsets.UTF_8.name());
+        //Default browser request, skipping it.
         if(request.contains("favicon.ico")) {return;}
         logger.debug("[REQUEST]: "+request);
         request=request.replace("/", "");
-        request=request.replace("/favicon.ico", "");
+        //Check request type
         if(!request.contains("teacher")) {
+        	//Request type - main page
         	logger.debug("[REQUEST]: sending default page.");
         	sendResponse(exchange, index,200);
         	return;
         }
+        //Request type - teacher page
+        //Find teacher name
         String teacher = request.replace("teacher:", "");
         logger.debug("[REQUEST]: teacher name is "+teacher);
-        //в url автоматически доставляется ?, а он нам мешает. убираем.
+        //In URI appears automatically "?". We need to delete it.
         teacher=teacher.replace("?", "");
+        //Is teacher exists
+        if(!database.info.toJSONString().contains(teacher)) {
+        	//teacher not exists - sending 404 error
+        	sendResponse(exchange,"404 - not found",404);
+        	return;
+        }
+        //teacher exists - sending teacher page
         String anser = HTMLGenerator.generateTeacher(teacher);
         sendResponse(exchange,anser,200);
         } catch (UnsupportedEncodingException e) {
