@@ -18,6 +18,8 @@ import electron.utils.logger;
 public class database {
 	private static File confFile = new File("config.json");
 	public static JSONObject info;
+	public static List<String> allnames;
+	public static List<String> students;
 	
 	/**
 	 * Load method.
@@ -31,6 +33,7 @@ public class database {
 	    	System.exit(0);
 	    }
 	    info = (JSONObject) FileIteractor.ParseJs(FileIteractor.getFileLine(confFile));
+	    allnames=getALLNames();
 	    logger.debug("[DATABASE]: file loaded in memory.");
 	}
 	/**
@@ -89,5 +92,19 @@ public class database {
 			return anser;
 		
 		return emptyresponse;
+	}
+	public static List<String> getALLNames(){
+		List<String> result = new ArrayList();
+		//Adding all students
+		for(int i = 0;i< settings.getListClasses().size();i++) {
+			String[] names = String.valueOf(info.get(settings.getListClasses().get(i))).split("\n");
+			for(int a=0;a<names.length;a++) {
+				result.add(names[a]+" : "+settings.getListClasses().get(i));
+			}
+		}
+		students=result;
+		//Adding all teachers occurs when generating index.html
+		//Check generateTableElement method.		
+		return result;
 	}
 }

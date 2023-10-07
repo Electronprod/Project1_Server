@@ -12,6 +12,7 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import electron.data.database;
 import electron.generators.HTMLGenerator;
+import electron.utils.Finder;
 import electron.utils.logger;
 
 /**
@@ -19,6 +20,7 @@ import electron.utils.logger;
  */
 public class site {
 	static String index;
+	static String find;
 	/**
 	 * Start method for server
 	 * @throws IOException - server exceptions
@@ -29,7 +31,10 @@ public class site {
 		server.setExecutor(null);	
         server.start();
 		index = HTMLGenerator.generateIndex();
+		//removing dublicates from search system
+		Finder.removeDuplicates(database.allnames);
 		index=index.replace("null", "");
+		find = HTMLGenerator.generateFind();
 		logger.log("Server started on "+server.getAddress());
 	}
 public static class MainHandler implements HttpHandler {
@@ -45,33 +50,85 @@ public static class MainHandler implements HttpHandler {
         logger.debug("[REQUEST]: "+request);
         request=request.replace("/", "");
         //Check request type
-        if(!request.contains("teacher")) {
-        	//Request type - main page
-        	logger.debug("[REQUEST]: sending default page.");
-        	sendResponse(exchange, index,200);
+        if(request.contains("teacher")) {
+        	//Request type - teacher page
+            teacherRequest(request,exchange);
+            return;
+        }
+        if(request.contains("searchform")) {
+        	//Request type - find page
+            findRequest(exchange);
+            return;
+        }
+        if(request.contains("search")) {
+        	//Request type - search page
+        	searchRequest(request,exchange);
         	return;
         }
-        //Request type - teacher page
-        //Find teacher name
-        String teacher = request.replace("teacher:", "");
-        logger.debug("[REQUEST]: teacher name is "+teacher);
-        //In URI appears automatically "?". We need to delete it.
-        teacher=teacher.replace("?", "");
-        //Is teacher exists
-        if(!database.info.toJSONString().contains(teacher)) {
-        	//teacher not exists - sending 404 error
-        	sendResponse(exchange,"404 - not found",404);
+        if(request.contains("student")) {
+        	//Request type - search page
+        	studentRequest(exchange,request);
         	return;
         }
-        //teacher exists - sending teacher page
-        String anser = HTMLGenerator.generateTeacher(teacher);
-        sendResponse(exchange,anser,200);
+        indexRequest(exchange);
         } catch (UnsupportedEncodingException e) {
             // not going to happen - value came from JDK's own StandardCharsets
         }
     }
 }
-
+private static void studentRequest(HttpExchange exchange,String request) throws IOException {
+	logger.debug("[STUDENT_REQUEST]["+request+"]: finding...");
+	//Find name
+    String name = request.replace("student:", "");
+    //In URI appears automatically "?". We need to delete it.
+    name=name.replace("?", "");
+	//Check, is it student or teacher
+    if(!name.contains(":")) {
+    	//It is teacher - calling teacher method
+    	request=request.replace("student:", "teacher:");
+    	teacherRequest(request,exchange);
+    	return;
+    }
+    String studentname = name.split(" : ")[0];
+    String classname = name.split(" : ")[1];
+    //It is student - generating his time table
+    String html = HTMLGenerator.generateStudent(classname,studentname);
+    sendResponse(exchange, html,200);
+}
+private static void indexRequest(HttpExchange exchange) throws IOException {
+	sendResponse(exchange, index,200);
+}
+private static void findRequest(HttpExchange exchange) throws IOException {
+	sendResponse(exchange, find,200);
+}
+private static void searchRequest(String request,HttpExchange exchange) throws IOException {
+	logger.debug("[SEARCH_REQUST]["+request+"]: finding...");
+	//Find search request
+	String search = request.replace("search?name=", "");
+	logger.debug("[SEARCH_REQUST]["+request+"]: found name: "+search);
+	String found = Finder.get(database.allnames, search);
+	logger.debug("[MOST_SIMULAR_FIND]: "+ found);
+	String html = HTMLGenerator.generateSearchResults(found);
+	sendResponse(exchange,html,200);	
+}
+private static void teacherRequest(String request,HttpExchange exchange) throws IOException {
+	logger.debug("[TEACHER_REQUEST]["+request+"]: finding...");
+	//Find teacher name
+    String teacher = request.replace("teacher:", "");
+    //In URI appears automatically "?". We need to delete it.
+    teacher=teacher.replace("?", "");
+    //Is teacher exists
+    if(!database.info.toJSONString().contains(teacher)) {
+    	//teacher not exists - sending 404 error
+    	sendResponse(exchange,"404 - not found",404);
+    	logger.debug("[TEACHER_REQUEST]["+teacher+"]: teacher not found");
+    	return;
+    }
+    //teacher exists - sending teacher page
+    String anser = HTMLGenerator.generateTeacher(teacher);
+    sendResponse(exchange,anser,200);
+    logger.debug("[TEACHER_REQUEST]["+teacher+"]: teacher found, sent page to remote user.");
+}
 public static void sendResponse(HttpExchange exchange, String response,int code) throws IOException {
     exchange.sendResponseHeaders(code, response.getBytes().length);
     OutputStream outputStream = exchange.getResponseBody();

@@ -7,7 +7,7 @@ import electron.data.settings;
 import electron.net.site;
 import electron.utils.Other;
 import electron.utils.logger;
-//Project1
+//Project1_Server
 public class Project1_Server {
 	public static final String version = "Project1_Server - 1.1";
 	public static void main(String[] args){

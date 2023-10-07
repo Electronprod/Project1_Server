@@ -26,7 +26,26 @@ public class HTMLGenerator {
 		index=index.replace("%sunday%", database.getTeacherLessons(day[6],teachername));
 		return index;		
 	}
-	
+	public static String generateStudent(String classname,String studentname) {
+		//Loading HTML template from file
+		String student = FileIteractor.getFileLine(new File("student.html"));
+		student=student.replace("%student%", studentname);
+		String table = generateTable(classname);
+		student=student.replace("%body%", table);
+		student=student.replace("null", "");
+		return student;
+	}
+	public static String generateFind() {
+		//Loading HTML template from file
+		String table = FileIteractor.getFileLine(new File("find.html"));
+		return table;
+	}
+	public static String generateSearchResults(String found) {
+		//Loading HTML template from file
+		String table = FileIteractor.getFileLine(new File("searchresults.html"));
+		table=table.replaceAll("%found%", found);
+		return table;
+	}
 	public static String generateIndex() {
 		//Loading HTML template from file
 		String index = FileIteractor.getFileLine(new File("index.html"));
@@ -87,6 +106,8 @@ public class HTMLGenerator {
 		String time = String.valueOf(lesson.get("time"));
 		String name = String.valueOf(lesson.get("lesson"));
 		String teacher = String.valueOf(lesson.get("teacher"));
+		//Adding to search option
+		database.allnames.add(teacher);
 		String btn="<form action=\"/teacher:"+teacher+" \">\r\n"
 				+ "            <button type=\"submit\">"+teacher+"</button>\r\n"
 				+ "        </form>";
