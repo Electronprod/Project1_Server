@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Расписание</title>
+    <title>Расписание %teacher%</title>
     <style type="text/css">
       TABLE {
        width: 500px; /* Ширина таблицы */
@@ -20,9 +20,14 @@
 </head>
 <body>
 	<div>
-		<h1>Расписание уроков 25.09-1.10</h1>
-		<br>
+		<h1>Расписание уроков: %student%:</h1>
 		%body%
+	</div>
+	<div>
+	    <!-- Форма с переадресацией -->
+    <form action="/"> <!-- Замените на нужный URL адрес -->
+        <button type="submit">Перейти на главную</button>
+    </form>
 	</div>
 </body>
 </html>
