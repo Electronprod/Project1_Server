@@ -14,10 +14,10 @@ public class settings {
 	 * Load method. Must be called before using other functions from this class.
 	 */
 	public static void load() {
-	    FileIteractor.loadFile(clFile);
-	    if (FileIteractor.getFileLines(clFile.getPath().toString()).isEmpty()) {
-	    	logger.error("Settings.txt file is empty! Fill it with data from Project1_Generator's setting.txt. Program shutting down...");
-	    	System.exit(0);
+	    FileOptions.loadFile(clFile);
+	    if (FileOptions.getFileLines(clFile.getPath().toString()).isEmpty()) {
+	    	logger.error("[RESOURCE_SYSTEM]: Settings.txt file is empty! Fill it with data from Project1_Generator's setting.txt. Program shutting down...");
+	    	System.exit(1);
 	    }
 	}
 	/**
@@ -26,8 +26,8 @@ public class settings {
 	 */
 	public static List<String> getListClasses(){
 		if(ls == null) {
-		List<String> strs = FileIteractor.getFileLines(clFile.getPath());
-		Collections.sort(strs);
+		List<String> strs = FileOptions.getFileLines(clFile.getPath());
+		//Collections.sort(strs);
 		ls = strs;
 		return ls;
 		}else {

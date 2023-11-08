@@ -20,7 +20,7 @@ import electron.utils.logger;
  * @author Electron
  * @version 1.2
  */
-public class FileIteractor {
+public class FileOptions {
 	//Поскольку этот класс переезжает из проекта в проект это нужно
 	private static void log(String msg) {logger.log(msg);}
 	private static void logerr(String msg) {logger.error(msg);}
@@ -87,20 +87,20 @@ public class FileIteractor {
 	 public static void loadFile(File f) {
 		    if (f.exists()) {
 		      if (f.canRead() && f.canWrite()) {
-		        log("[FileIteractor]: File " + f.getName() + " loaded.");
+		        log("[FileOptions]: File " + f.getName() + " loaded.");
 		      } else {
-		    	  logerr("[FileIteractor]: File " + f.getName() + " can't be read or wrote.");
-		    	  logerr("[FileIteractor]: Please, check for other launched copy of this program and for args of file " + f.getName());
+		    	  logerr("[FileOptions]: File " + f.getName() + " can't be read or wrote.");
+		    	  logerr("[FileOptions]: Please, check for other launched copy of this program and for args of file " + f.getName());
 		        System.exit(1);
 		      } 
 		    } else {
-		      log("[FileIteractor]: File not found. Creating it...");
+		      log("[FileOptions]: File not found. Creating it...");
 		      try {
 		        f.createNewFile();
-		        log("[FileIteractor]: File " + f.getName() + " created and loaded.");
+		        log("[FileOptions]: File " + f.getName() + " created and loaded.");
 		      } catch (IOException e) {
 		    	  logerr(e.getLocalizedMessage());
-		    	  logerr("[FileIteractor]: Please, create " + f.getName() + " yourself and try again. Bye.");
+		    	  logerr("[FileOptions]: Please, create " + f.getName() + " yourself and try again. Bye.");
 		        System.exit(1);
 		      } 
 		    } 

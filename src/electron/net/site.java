@@ -26,16 +26,18 @@ public class site {
 	 * @throws IOException - server exceptions
 	 */
 	public static void load() throws IOException {
+		logger.log("[SERVER]: creating server socket...");
 		HttpServer server = HttpServer.create(new InetSocketAddress(database.getPort()), 0);
 		server.createContext("/", new MainHandler());
 		server.setExecutor(null);	
         server.start();
+        logger.log("[SERVER]: socket created.");
 		index = HTMLGenerator.generateIndex();
-		//removing duplicates from search system
-		Finder.removeDuplicates(database.allnames);
 		index=index.replace("null", "");
 		find = HTMLGenerator.generateFind();
-		logger.log("Server started on "+server.getAddress());
+		logger.debug("[SEARCH_SYSTEM]: removing duplicates from search system.");
+		Finder.removeDuplicates(database.allnames);
+		logger.log("[SERVER]: started on "+server.getAddress());
 	}
 public static class MainHandler implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException {
@@ -47,7 +49,7 @@ public static class MainHandler implements HttpHandler {
             request = java.net.URLDecoder.decode(request, StandardCharsets.UTF_8.name());
         //Default browser request, skipping it.
         if(request.contains("favicon.ico")) {return;}
-        logger.debug("[REQUEST]: "+request);
+        logger.debug("[SERVER]: request: "+request);
         request=request.replace("/", "");
         //Check request type
         if(request.contains("teacher")) {
@@ -77,7 +79,7 @@ public static class MainHandler implements HttpHandler {
     }
 }
 private static void studentRequest(HttpExchange exchange,String request) throws IOException {
-	logger.debug("[STUDENT_REQUEST]["+request+"]: finding...");
+	logger.debug("[STUDENT_REQUEST]: finding...");
 	//Find name
     String name = request.replace("student:", "");
     //In URI appears automatically "?". We need to delete it.
@@ -102,19 +104,19 @@ private static void findRequest(HttpExchange exchange) throws IOException {
 	sendResponse(exchange, find,200);
 }
 private static void searchRequest(String request,HttpExchange exchange) throws IOException {
-	logger.debug("[SEARCH_REQUST]["+request+"]: finding...");
+	logger.debug("[SEARCH_REQUST]: finding...");
 	//Find search request
 	String search = request.replace("search?name=", "");
-	logger.debug("[SEARCH_REQUST]["+request+"]: found name: "+search);
+	logger.debug("[SEARCH_REQUST]: found name: "+search);
 	//Find most similar string from database
 	String found = Finder.findMostSimilarString(search, database.allnames);
-	logger.debug("[MOST_SIMILAR_FIND]: "+ found);
+	logger.debug("[SEARCH_REQUST][FOUND]: "+ found);
 	//Generating HTML for founded item
 	String html = HTMLGenerator.generateSearchResults(found);
 	sendResponse(exchange,html,200);	
 }
 private static void teacherRequest(String request,HttpExchange exchange) throws IOException {
-	logger.debug("[TEACHER_REQUEST]["+request+"]: finding...");
+	logger.debug("[TEACHER_REQUEST]: finding...");
 	//Find teacher name
     String teacher = request.replace("teacher:", "");
     //In URI appears automatically "?". We need to delete it.
@@ -123,13 +125,13 @@ private static void teacherRequest(String request,HttpExchange exchange) throws 
     if(!database.info.toJSONString().contains(teacher)) {
     	//teacher not exists - sending 404 error
     	sendResponse(exchange,"404 - not found",404);
-    	logger.debug("[TEACHER_REQUEST]["+teacher+"]: teacher not found");
+    	logger.debug("[TEACHER_REQUEST]: teacher not found");
     	return;
     }
     //teacher exists - sending teacher page
     String anser = HTMLGenerator.generateTeacher(teacher);
     sendResponse(exchange,anser,200);
-    logger.debug("[TEACHER_REQUEST]["+teacher+"]: teacher found, sent page to remote user.");
+    logger.debug("[TEACHER_REQUEST]: teacher found, sent page to remote user.");
 }
 public static void sendResponse(HttpExchange exchange, String response,int code) throws IOException {
     exchange.sendResponseHeaders(code, response.getBytes().length);

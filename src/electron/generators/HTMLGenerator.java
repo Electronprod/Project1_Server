@@ -5,17 +5,19 @@ import java.io.File;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import electron.data.FileIteractor;
+import electron.data.FileOptions;
 import electron.data.database;
 import electron.data.settings;
+import electron.utils.logger;
 /**
  * HTML generator class
  */
 public class HTMLGenerator {
+	private static boolean addedFlag = false;
 	private static String[] day = {"Monday", "Tuesday", "Wednesday","Thursday","Friday","Saturday","Sunday"};
 	public static String generateTeacher(String teachername) {
 		//Loading HTML template from file
-		String index = FileIteractor.getFileLine(new File("teacher.html"));
+		String index = FileOptions.getFileLine(new File("teacher.html"));
 		index=index.replaceAll("%teacher%", teachername);
 		index=index.replaceAll("%monday%", database.getTeacherLessons(day[0],teachername));
 		index=index.replaceAll("%tuesday%", database.getTeacherLessons(day[1],teachername));
@@ -28,7 +30,7 @@ public class HTMLGenerator {
 	}
 	public static String generateStudent(String classname,String studentname) {
 		//Loading HTML template from file
-		String student = FileIteractor.getFileLine(new File("student.html"));
+		String student = FileOptions.getFileLine(new File("student.html"));
 		student=student.replaceAll("%student%", studentname);
 		String table = generateTable(classname);
 		student=student.replaceAll("%body%", table);
@@ -37,18 +39,20 @@ public class HTMLGenerator {
 	}
 	public static String generateFind() {
 		//Loading HTML template from file
-		String table = FileIteractor.getFileLine(new File("find.html"));
+		String table = FileOptions.getFileLine(new File("find.html"));
 		return table;
 	}
 	public static String generateSearchResults(String found) {
-		//Loading HTML template from file
-		String table = FileIteractor.getFileLine(new File("searchresults.html"));
+		logger.debug("[HTML_GENERATOR_SEARCHRESULTS]: loading HTML template from file...");
+		String table = FileOptions.getFileLine(new File("searchresults.html"));
 		table=table.replaceAll("%found%", found);
+		logger.debug("[HTML_GENERATOR_SEARCHRESULTS]: done.");
 		return table;
 	}
 	public static String generateIndex() {
-		//Loading HTML template from file
-		String index = FileIteractor.getFileLine(new File("index.html"));
+		logger.debug("[HTML_GENERATOR_INDEX]: loading HTML template from file...");
+		String index = FileOptions.getFileLine(new File("index.html"));
+		logger.debug("[HTML_GENERATOR_INDEX]: loaded. Placing data...");
 		String gen="";
 		for(int i=0;i<settings.getListClasses().size();i++) {
 			gen=gen+"<div>";
@@ -56,6 +60,8 @@ public class HTMLGenerator {
 			gen=gen+"</div>";
 		}
 		index=index.replaceAll("%body%",gen);
+		addedFlag=true;
+		logger.debug("[HTML_GENERATOR_INDEX]: generated SUCCESSFULLY.");
 		return index;
 	}
 	/**
@@ -65,7 +71,7 @@ public class HTMLGenerator {
 	 */
 	private static String generateTable(String classname) {
 		//Loading HTML template from file
-		String table = FileIteractor.getFileLine(new File("table.html"));
+		String table = FileOptions.getFileLine(new File("table.html"));
 		//change placeholders
 		table=table.replaceAll("%classname%", classname);
 		table=table.replaceAll("%monday%", compile(day[0],classname));
@@ -107,7 +113,9 @@ public class HTMLGenerator {
 		String name = String.valueOf(lesson.get("lesson"));
 		String teacher = String.valueOf(lesson.get("teacher"));
 		//Adding to search option
+		if(!addedFlag) {
 		database.allnames.add(teacher);
+		}
 		String btn="<form action=\"/teacher:"+teacher+" \">\r\n"
 				+ "            <button type=\"submit\">"+teacher+"</button>\r\n"
 				+ "        </form>";

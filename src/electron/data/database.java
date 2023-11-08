@@ -24,18 +24,17 @@ public class database {
 	 * Must be called before using other methods from this class.
 	 */
 	public static void load() {
-		FileIteractor.loadFile(confFile);
-	    if (FileIteractor.getFileLines(confFile.getPath().toString()).isEmpty()) {
-	    	logger.error("[DATABASE]: database isn't configured. Please, use Project1_Generator application.");
+		FileOptions.loadFile(confFile);
+	    if (FileOptions.getFileLines(confFile.getPath().toString()).isEmpty()) {
+	    	logger.error("[RESOURCE_SYSTEM]: database isn't configured. Please, use Project1_Generator application.");
 	    	logger.error("Shutting down...");
 	    	System.exit(0);
 	    }
-	    info = (JSONObject) FileIteractor.ParseJs(FileIteractor.getFileLine(confFile));
+	    info = (JSONObject) FileOptions.ParseJs(FileOptions.getFileLine(confFile));
 	    allnames=getALLNames();
-	    logger.debug("[DATABASE]: file loaded in memory.");
 	}
 	/**
-	 * Get port from configuration method.
+	 * Get port from configuration
 	 * @return port
 	 */
 	public static int getPort() {
@@ -65,26 +64,7 @@ public class database {
     			toShow.add(obj);
     		}
     	}
-    	return toShow;	
-	}
-	private static List<String> sortJSONbyTime(JSONArray arr){
-		List<String> values = new ArrayList();
-		for(int i = 0;arr.size()>i;i++) {
-			JSONObject obj = (JSONObject) arr.get(i);
-			values.add(obj.get("time")+"\n"+obj.get("lesson")+"\n"+obj.get("teacher")+"\n"+obj.get("class"));
-		}
-		Collections.sort(values);
-		JSONArray result = new JSONArray();
-		for(int o = 0;o>values.size();o++) {
-			String val = values.get(o);
-			JSONObject obj = new JSONObject();
-			String[] spl = val.split("\n");
-			obj.put("time", spl[0]);
-			obj.put("lesson", spl[1]);
-			obj.put("teacher", spl[2]);
-			obj.put("class", spl[3]);
-		}
-		return null;
+    	return toShow;
 	}
 	/**
 	 * Get lessons for teacher method
