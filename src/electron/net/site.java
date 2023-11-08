@@ -31,7 +31,7 @@ public class site {
 		server.setExecutor(null);	
         server.start();
 		index = HTMLGenerator.generateIndex();
-		//removing dublicates from search system
+		//removing duplicates from search system
 		Finder.removeDuplicates(database.allnames);
 		index=index.replace("null", "");
 		find = HTMLGenerator.generateFind();
@@ -39,7 +39,7 @@ public class site {
 	}
 public static class MainHandler implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException {
-        //Get URI question
+        //Get URI
         URI uri = exchange.getRequestURI();
         String request = uri.toString();
         try {
@@ -106,8 +106,10 @@ private static void searchRequest(String request,HttpExchange exchange) throws I
 	//Find search request
 	String search = request.replace("search?name=", "");
 	logger.debug("[SEARCH_REQUST]["+request+"]: found name: "+search);
-	String found = Finder.get(database.allnames, search);
-	logger.debug("[MOST_SIMULAR_FIND]: "+ found);
+	//Find most similar string from database
+	String found = Finder.findMostSimilarString(search, database.allnames);
+	logger.debug("[MOST_SIMILAR_FIND]: "+ found);
+	//Generating HTML for founded item
 	String html = HTMLGenerator.generateSearchResults(found);
 	sendResponse(exchange,html,200);	
 }

@@ -25,7 +25,6 @@ public class Project1_Server {
 		} catch (IOException e) {
 			logger.error("Error starting server: "+e.getMessage());
 			e.printStackTrace();
-			logger.log("Shutting down...");
 			System.exit(1);
 		}
 		logger.log("Loading done.");

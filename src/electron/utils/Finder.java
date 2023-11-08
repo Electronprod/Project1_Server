@@ -33,7 +33,7 @@ public class Finder {
 	/**
 	 * @author OpenAI ChatGPT 3.5
 	 */
-	private static String findMostSimilarString(String input, List<String> stringList) {
+	public static String findMostSimilarString(String input, List<String> stringList) {
 	    String mostSimilarString = "";
 	    int maxLCSLength = 0;
 
@@ -45,12 +45,6 @@ public class Finder {
 	        }
 	    }
 	    return mostSimilarString;
-	}
-	/**
-	 * @author OpenAI ChatGPT 3.5
-	 */
-	public static String get(List<String> names,String tofind) {
-		return findMostSimilarString(tofind, names);
 	}
 	
 	/**

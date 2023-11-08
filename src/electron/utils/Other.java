@@ -1,8 +1,16 @@
 package electron.utils;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 public class Other {
+
 	public static boolean htmlCheck() {
 		if(!new File("index.html").exists()) {
 			return false;

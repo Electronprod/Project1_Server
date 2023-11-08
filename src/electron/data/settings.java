@@ -27,7 +27,7 @@ public class settings {
 	public static List<String> getListClasses(){
 		if(ls == null) {
 		List<String> strs = FileIteractor.getFileLines(clFile.getPath());
-		//Collections.sort(strs);
+		Collections.sort(strs);
 		ls = strs;
 		return ls;
 		}else {

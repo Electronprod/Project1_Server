@@ -13,13 +13,11 @@ import electron.utils.logger;
 
 /**
  * Class, that controls config.json file and data in.
- * @version 1.0
  */
 public class database {
 	private static File confFile = new File("config.json");
 	public static JSONObject info;
 	public static List<String> allnames;
-	public static List<String> students;
 	
 	/**
 	 * Load method.
@@ -69,6 +67,25 @@ public class database {
     	}
     	return toShow;	
 	}
+	private static List<String> sortJSONbyTime(JSONArray arr){
+		List<String> values = new ArrayList();
+		for(int i = 0;arr.size()>i;i++) {
+			JSONObject obj = (JSONObject) arr.get(i);
+			values.add(obj.get("time")+"\n"+obj.get("lesson")+"\n"+obj.get("teacher")+"\n"+obj.get("class"));
+		}
+		Collections.sort(values);
+		JSONArray result = new JSONArray();
+		for(int o = 0;o>values.size();o++) {
+			String val = values.get(o);
+			JSONObject obj = new JSONObject();
+			String[] spl = val.split("\n");
+			obj.put("time", spl[0]);
+			obj.put("lesson", spl[1]);
+			obj.put("teacher", spl[2]);
+			obj.put("class", spl[3]);
+		}
+		return null;
+	}
 	/**
 	 * Get lessons for teacher method
 	 * @param day - day
@@ -102,7 +119,6 @@ public class database {
 				result.add(names[a]+" : "+settings.getListClasses().get(i));
 			}
 		}
-		students=result;
 		//Adding all teachers occurs when generating index.html
 		//Check generateTableElement method.		
 		return result;

@@ -17,21 +17,21 @@ public class HTMLGenerator {
 		//Loading HTML template from file
 		String index = FileIteractor.getFileLine(new File("teacher.html"));
 		index=index.replaceAll("%teacher%", teachername);
-		index=index.replace("%monday%", database.getTeacherLessons(day[0],teachername));
-		index=index.replace("%tuesday%", database.getTeacherLessons(day[1],teachername));
-		index=index.replace("%wednesday%", database.getTeacherLessons(day[2],teachername));
-		index=index.replace("%thursday%", database.getTeacherLessons(day[3],teachername));
-		index=index.replace("%friday%", database.getTeacherLessons(day[4],teachername));
-		index=index.replace("%saturday%", database.getTeacherLessons(day[5],teachername));
-		index=index.replace("%sunday%", database.getTeacherLessons(day[6],teachername));
+		index=index.replaceAll("%monday%", database.getTeacherLessons(day[0],teachername));
+		index=index.replaceAll("%tuesday%", database.getTeacherLessons(day[1],teachername));
+		index=index.replaceAll("%wednesday%", database.getTeacherLessons(day[2],teachername));
+		index=index.replaceAll("%thursday%", database.getTeacherLessons(day[3],teachername));
+		index=index.replaceAll("%friday%", database.getTeacherLessons(day[4],teachername));
+		index=index.replaceAll("%saturday%", database.getTeacherLessons(day[5],teachername));
+		index=index.replaceAll("%sunday%", database.getTeacherLessons(day[6],teachername));
 		return index;		
 	}
 	public static String generateStudent(String classname,String studentname) {
 		//Loading HTML template from file
 		String student = FileIteractor.getFileLine(new File("student.html"));
-		student=student.replace("%student%", studentname);
+		student=student.replaceAll("%student%", studentname);
 		String table = generateTable(classname);
-		student=student.replace("%body%", table);
+		student=student.replaceAll("%body%", table);
 		student=student.replace("null", "");
 		return student;
 	}
@@ -55,7 +55,7 @@ public class HTMLGenerator {
 			gen=gen+generateTable(settings.getListClasses().get(i));
 			gen=gen+"</div>";
 		}
-		index=index.replace("%body%",gen);
+		index=index.replaceAll("%body%",gen);
 		return index;
 	}
 	/**
@@ -67,14 +67,14 @@ public class HTMLGenerator {
 		//Loading HTML template from file
 		String table = FileIteractor.getFileLine(new File("table.html"));
 		//change placeholders
-		table=table.replace("%classname%", classname);
-		table=table.replace("%monday%", compile(day[0],classname));
-		table=table.replace("%tuesday%", compile(day[1],classname));
-		table=table.replace("%wednesday%", compile(day[2],classname));
-		table=table.replace("%thursday%", compile(day[3],classname));
-		table=table.replace("%friday%", compile(day[4],classname));
-		table=table.replace("%saturday%", compile(day[5],classname));
-		table=table.replace("%sunday%", compile(day[6],classname));
+		table=table.replaceAll("%classname%", classname);
+		table=table.replaceAll("%monday%", compile(day[0],classname));
+		table=table.replaceAll("%tuesday%", compile(day[1],classname));
+		table=table.replaceAll("%wednesday%", compile(day[2],classname));
+		table=table.replaceAll("%thursday%", compile(day[3],classname));
+		table=table.replaceAll("%friday%", compile(day[4],classname));
+		table=table.replaceAll("%saturday%", compile(day[5],classname));
+		table=table.replaceAll("%sunday%", compile(day[6],classname));
 		return table;
 		
 	}
