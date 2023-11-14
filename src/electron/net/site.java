@@ -1,5 +1,6 @@
 package electron.net;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
@@ -10,6 +11,8 @@ import java.nio.charset.StandardCharsets;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+
+import electron.data.FileOptions;
 import electron.data.database;
 import electron.generators.HTMLGenerator;
 import electron.utils.Finder;
@@ -72,6 +75,11 @@ public static class MainHandler implements HttpHandler {
         	studentRequest(exchange,request);
         	return;
         }
+        if(request.contains("js") || request.contains("css") || request.contains("html")) {
+        	//Request type - resources for page from browser
+        	sendResponse(exchange,getResource(request),200);
+        	return;
+        }
         indexRequest(exchange);
         } catch (UnsupportedEncodingException e) {
             // not going to happen - value came from JDK's own StandardCharsets
@@ -132,6 +140,12 @@ private static void teacherRequest(String request,HttpExchange exchange) throws 
     String anser = HTMLGenerator.generateTeacher(teacher);
     sendResponse(exchange,anser,200);
     logger.debug("[TEACHER_REQUEST]: teacher found, sent page to remote user.");
+}
+public static String getResource(String fname) {
+	logger.debug("[RESOURCE_SYSTEM]: asked file: "+fname);
+	String r = FileOptions.getFileLine(new File(fname));
+	r.replace("/", "");
+	return r;
 }
 public static void sendResponse(HttpExchange exchange, String response,int code) throws IOException {
     exchange.sendResponseHeaders(code, response.getBytes().length);
